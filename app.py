@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
+import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load model dan scaler
-model = pickle.load(open('model.pkl', 'rb'))
-scaler = pickle.load(open('scaler.pkl', 'rb'))
+model = joblib.load("model_regresi.pkl")
+scaler = joblib.load("scaler.pkl")
+
 
 # Load data
 df = pd.read_csv('Online Retail.csv')
@@ -38,17 +39,16 @@ rfm['Segment'] = rfm['RFM_Score'].apply(lambda x: 'Best' if x == '444' else 'Oth
 st.sidebar.title("Navigasi")
 page = st.sidebar.radio("Pilih halaman:", ["Prediksi Sales", "Visualisasi RFM"])
 
-# Halaman Prediksi
 if page == "Prediksi Sales":
     st.title("Prediksi Sales")
-
-    qty = st.number_input("Masukkan Quantity", min_value=1, value=5)
-    price = st.number_input("Masukkan Unit Price", min_value=0.0, value=10.0)
+    qty = st.number_input("Masukkan Quantity", min_value=1)
+    price = st.number_input("Masukkan Unit Price", min_value=0.01, format="%.2f")
 
     if st.button("Prediksi"):
-        input_data = scaler.transform([[qty, price]])
-        pred = model.predict(input_data)
-        st.success(f"Prediksi Sales: £{pred[0]:.2f}")
+        input_data = np.array([[qty, price]])
+        input_scaled = scaler.transform(input_data)
+        result = model.predict(input_scaled)[0]
+        st.success(f"Prediksi Sales: £{result:.2f}")
 
 # Halaman Visualisasi
 elif page == "Visualisasi RFM":
