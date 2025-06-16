@@ -7,7 +7,7 @@ app = FastAPI()
 
 # Load model dan scaler
 model = joblib.load("model_regresi.pkl")
-scaler = joblib.load("scaler.pkl")  # Pastikan file scaler.pkl juga ada
+scaler = joblib.load("scaler.pkl")  
 
 # Schema untuk input
 class SalesInput(BaseModel):
